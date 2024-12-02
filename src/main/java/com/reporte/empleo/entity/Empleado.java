@@ -4,13 +4,12 @@ import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-
 @Entity
 @Table(name = "Empleado")
 public class Empleado {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Usa Identity para bases de datos como MySQL
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_empleado")
     private Integer idEmpleado;
 
@@ -26,21 +25,19 @@ public class Empleado {
     @Column(name = "sexo", nullable = false)
     private char sexo;
 
-
     @Temporal(TemporalType.DATE)
     @Column(name = "FN")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date FN;
 
+    // Relación con Seguridad
+    @OneToOne(mappedBy = "empleado", cascade = CascadeType.ALL)
+    private Seguridad seguridad;
+
+    // Relación con Salario (Puesto)
     @ManyToOne
-    @JoinColumn(name = "idPuesto", referencedColumnName = "idPuesto")
+    @JoinColumn(name = "idPuesto", referencedColumnName = "idPuesto", nullable = false)
     private Salario salario;
-
-    @Column(name = "idPuesto", insertable = false, updatable = false)
-    private Integer idPuesto;
-
-    @Column(name = "descripcionPuesto")
-    private String descripcionPuesto;  // Descripción del puesto
 
     // Getters y setters
     public Integer getIdEmpleado() {
@@ -99,29 +96,19 @@ public class Empleado {
         this.salario = salario;
     }
 
-    public Integer getIdPuesto() {
-        return idPuesto;
+    public Seguridad getSeguridad() {
+        return seguridad;
     }
 
-    public void setIdPuesto(Integer idPuesto) {
-        this.idPuesto = idPuesto;
+    public void setSeguridad(Seguridad seguridad) {
+        this.seguridad = seguridad;
     }
 
-    // Getter y setter para descripcionPuesto
-    public String getDescripcionPuesto() {
-        return descripcionPuesto;
-    }
-
-    public void setDescripcionPuesto(String descripcionPuesto) {
-        this.descripcionPuesto = descripcionPuesto;
-    }
-
-    // Método adicional para representar el idEmpleado como String con ceros a la izquierda
+    // Métodos adicionales
     public String getIdEmpleadoAsString() {
         return String.format("%08d", idEmpleado);
     }
 
-    // Método adicional para convertir de String a Integer el idEmpleado
     public void setIdEmpleadoFromString(String idEmpleadoString) {
         this.idEmpleado = Integer.parseInt(idEmpleadoString);
     }

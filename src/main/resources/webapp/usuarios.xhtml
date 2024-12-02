@@ -1,0 +1,170 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Gestión de Empleados</title>
+
+        <!-- Bootstrap CSS -->
+        <link href="#{request.contextPath}/webjars/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+
+        <!-- Opcional: Iconos de Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet"/>
+
+        <!-- Estilos personalizados -->
+        <style>
+            .modal-dialog {
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            }
+            .modal-content {
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            }
+        </style>
+    </h:head>
+
+    <h:body class="container-fluid p-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Gestión de Empleados</h2>
+            </div>
+
+            <div class="card-body">
+                <h:form id="formEmpleados">
+                    <!-- Botón para abrir modal de nuevo empleado -->
+                    <div class="mb-3">
+                        <p:commandButton value="Nuevo Empleado"
+                                         onclick="PF('dlgNuevoEmpleado').show()"
+                                         icon="pi pi-plus"
+                                         styleClass="btn btn-success"/>
+                    </div>
+
+                    <!-- Tabla de Empleados -->
+                    <p:dataTable var="empleado" value="#{usuarioBean.empleados}"
+                                 selectionMode="single"
+                                 selection="#{usuarioBean.empleadoSeleccionado}"
+                                 rowKey="#{empleado.idEmpleado}"
+                                 styleClass="table table-striped table-hover">
+
+                        <p:column headerText="Nombre" styleClass="col-3">
+                            <h:outputText value="#{empleado.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Apellido Paterno" styleClass="col-3">
+                            <h:outputText value="#{empleado.apellidoP}" />
+                        </p:column>
+
+                        <p:column headerText="Acciones" styleClass="col-2">
+                            <div class="btn-group">
+                                <p:commandButton icon="bi bi-pencil"
+                                                 styleClass="btn btn-sm btn-warning"
+                                                 onclick="PF('dlgEditarEmpleado').show()"
+                                                 update=":formEditarEmpleado"/>
+
+                                <p:commandButton icon="bi bi-trash"
+                                                 styleClass="btn btn-sm btn-danger"
+                                                 action="#{usuarioBean.eliminarEmpleado}"
+                                                 update="@form"
+                                                 onclick="if (!confirm('¿Está seguro?')) return false;"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+
+                    <!-- Modal para agregar nuevo empleado -->
+                    <p:dialog header="Nuevo Empleado"
+                              widgetVar="dlgNuevoEmpleado"
+                              modal="true"
+                              closable="true"
+                              styleClass="modal-lg">
+                        <h:form id="formNuevoEmpleado" styleClass="needs-validation" novalidate="true">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <h:outputLabel for="nombre" value="Nombre:" styleClass="form-label"/>
+                                    <h:inputText id="nombre" value="#{usuarioBean.nuevoEmpleado.nombre}" required="true" styleClass="form-control"/>
+                                    <p:message for="nombre" display="text" styleClass="text-danger"/>
+                                </div>
+                                <div class="mb-3">
+                                    <h:outputLabel for="apellidoP" value="Apellido Paterno:" styleClass="form-label"/>
+                                    <h:inputText id="apellidoP" value="#{usuarioBean.nuevoEmpleado.apellidoP}" styleClass="form-control"/>
+                                </div>
+                                <!-- Más campos -->
+                            </div>
+                            <div class="modal-footer">
+                                <p:commandButton value="Guardar"
+                                                 action="#{usuarioBean.guardarEmpleado}"
+                                                 update=":formEmpleados"
+                                                 styleClass="btn btn-primary"
+                                                 oncomplete="PF('dlgNuevoEmpleado').hide()" />
+                                <p:commandButton value="Cancelar"
+                                                 onclick="PF('dlgNuevoEmpleado').hide()"
+                                                 styleClass="btn btn-secondary"
+                                                 type="button" />
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Modal para editar empleado -->
+                    <p:dialog header="Editar Empleado"
+                              wi dgetVar="dlgEditarEmpleado"
+                              modal="true"
+                              closable="true"
+                              styleClass="modal-dialog">
+                        <h:form id="formEditarEmpleado" styleClass="needs-validation" novalidate="true">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <h:outputLabel for="nombreEdit" value="Nombre:" styleClass="form-label"/>
+                                    <h:inputText id="nombreEdit"
+                                                 value="#{usuarioBean.empleadoSeleccionado.nombre}"
+                                                 required="true"
+                                                 styleClass="form-control"/>
+                                    <div class="invalid-feedback">Por favor ingrese un nombre</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h:outputLabel for="apellidoPEdit" value="Apellido Paterno:" styleClass="form-label"/>
+                                    <h:inputText id="apellidoPEdit"
+                                                 value="#{usuarioBean.empleadoSeleccionado.apellidoP}"
+                                                 styleClass="form-control"/>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h:outputLabel for="apellidoMEdit" value="Apellido Materno:" styleClass="form-label"/>
+                                    <h:inputText id="apellidoMEdit"
+                                                 value="#{usuarioBean.empleadoSeleccionado.apellidoM}"
+                                                 styleClass="form-control"/>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h:outputLabel for="sexoEdit" value="Sexo:" styleClass="form-label"/>
+                                    <h:selectOneMenu id="sexoEdit"
+                                                     value="#{usuarioBean.empleadoSeleccionado.sexo}"
+                                                     styleClass="form-select">
+                                        <f:selectItem itemValue="H" itemLabel="Hombre" />
+                                        <f:selectItem itemValue="M" itemLabel="Mujer" />
+                                    </h:selectOneMenu>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <p:commandButton value="Actualizar"
+                                                 action="#{usuarioBean.guardarEmpleado}"
+                                                 update=":formEmpleados"
+                                                 styleClass="btn btn-primary"
+                                                 oncomplete="PF('dlgEditarEmpleado').hide()" />
+                                <p:commandButton value="Cancelar"
+                                                 onclick="PF('dlgEditarEmpleado').hide()"
+                                                 styleClass="btn btn-secondary"
+                                                 type="button" />
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                </h:form>
+            </div>
+        </div>
+        <!-- Bootstrap JS -->
+        <script src="#{request.contextPath}/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    </h:body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config version="4.0"
+              xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+              https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd">
+
+    <application>
+        <!-- Integración con Spring -->
+        <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+
+        <!-- Soporte para PrimeFaces -->
+        <resource-handler>org.primefaces.application.resource.PrimeFacesResourceHandler</resource-handler>
+
+        <!-- Configuración de localización -->
+        <locale-config>
+            <default-locale>es_MX</default-locale>
+            <supported-locale>en_US</supported-locale>
+        </locale-config>
+    </application>
+
+    <!-- Reglas de navegación -->
+    <navigation-rule>
+        <from-view-id>/login.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>success</from-outcome>
+            <to-view-id>/empleados.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>failure</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>

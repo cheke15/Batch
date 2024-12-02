@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Iniciar Sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/styles.css"/>
+</h:head>
+
+<h:body>
+    <div class="login-container">
+        <main class="form-signin w-100 m-auto">
+            <h:form id="loginForm" class="needs-validation" novalidate="true">
+                <div class="text-center mb-4">
+                    <img class="mb-4"
+                         src="#{request.contextPath}/resources/images/logo.png"
+                         alt="Logo"
+                         width="72"
+                         height="72"/>
+                    <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+                </div>
+
+                <!-- Mensajes de error -->
+                <h:panelGroup rendered="#{not empty facesContext.messageList}">
+                    <div class="alert alert-danger">
+                        <h:messages globalOnly="true" showSummary="true" showDetail="false"/>
+                    </div>
+                </h:panelGroup>
+
+                <div class="form-floating mb-2">
+                    <h:inputText id="username"
+                                 value="#{loginBean.username}"
+                                 required="true"
+                                 requiredMessage="Usuario es requerido"
+                                 styleClass="form-control #{facesContext.validationFailed and not empty facesContext.messageList ? 'is-invalid' : ''}"/>
+                    <h:outputLabel for="username" value="Usuario" styleClass="form-label"/>
+                    <h:message for="username" errorClass="invalid-feedback"/>
+                </div>
+
+                <div class="form-floating mb-2">
+                    <h:inputSecret id="password"
+                                   value="#{loginBean.password}"
+                                   required="true"
+                                   requiredMessage="Contraseña es requerida"
+                                   styleClass="form-control #{facesContext.validationFailed and not empty facesContext.messageList ? 'is-invalid' : ''}"/>
+                    <h:outputLabel for="password" value="Contraseña" styleClass="form-label"/>
+                    <h:message for="password" errorClass="invalid-feedback"/>
+                </div>
+
+                <div class="form-check mb-3">
+                    <h:selectBooleanCheckbox id="rememberMe"
+                                             value="#{loginBean.rememberMe}"
+                                             styleClass="form-check-input"/>
+                    <h:outputLabel for="rememberMe" value="Recordarme" styleClass="form-check-label"/>
+                </div>
+
+                <h:commandButton value="Iniciar Sesión"
+                                 action="#{loginBean.login()}"
+                                 styleClass="btn btn-primary w-100 py-2"/>
+
+                <div class="text-center mt-3">
+                    <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <div class="text-center mt-3">
+                    <span>¿No tienes cuenta? </span>
+                    <a href="registro.xhtml" class="text-decoration-none">Registrarse</a>
+                </div>
+
+                <p class="mt-5 mb-3 text-body-secondary text-center">© 2023 Tu Empresa</p>
+            </h:form>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</h:body>
+</html>

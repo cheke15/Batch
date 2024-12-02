@@ -6,6 +6,5 @@ ID: 3, Nombre: Carlos, Sexo: M, Puesto: Desarrollador
 ID: 4, Nombre: Laura, Sexo: F, Puesto: Analista
 ID: 5, Nombre: Luis, Sexo: M, Puesto: Gerente
 ID: 6, Nombre: Juan, Sexo: M, Puesto: Desarrollador
-ID: 7, Nombre: chucho, Sexo: M, Puesto: Jefe de Proyecto
 ID: 8, Nombre: Juaan, Sexo: M, Puesto: Desarrollador
 ID: 9, Nombre: Juan, Sexo: M, Puesto: Soporte

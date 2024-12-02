@@ -1,8 +1,11 @@
 package com.reporte.empleo.repository;
 
 import com.reporte.empleo.entity.Seguridad;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface SeguridadRepository extends CrudRepository<Seguridad, Integer> {
-   ;
+@Repository
+public interface SeguridadRepository extends JpaRepository<Seguridad, Integer> {
+   // Buscar por correo
+   Seguridad findByCorreo(String correo);
 }

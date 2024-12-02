@@ -7,21 +7,34 @@ import jakarta.persistence.*;
 public class Seguridad {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idUsuario")
     private Integer idUsuario;
+
+    @Column(name = "correo", nullable = false, unique = true)
+    private String correo;
 
     @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "activo", nullable = false)
-    private char activo;
+    private Character activo; // Cambiado a Character para evitar problemas con valores nulos
 
     @OneToOne
-    @JoinColumn(name = "idEmpleado", referencedColumnName = "id_Empleado")
+    @JoinColumn(name = "idEmpleado", referencedColumnName = "id_empleado", nullable = false)
     private Empleado empleado;
 
-    @Column(name = "idEmpleado", insertable = false, updatable = false)
-    private Integer idEmpleado;
+    // Constructor vacío requerido por JPA
+    public Seguridad() {
+    }
+
+    // Constructor parametrizado (opcional)
+    public Seguridad(String correo, String password, Character activo, Empleado empleado) {
+        this.correo = correo;
+        this.password = password;
+        this.activo = activo;
+        this.empleado = empleado;
+    }
 
     // Getters y setters
     public Integer getIdUsuario() {
@@ -32,6 +45,14 @@ public class Seguridad {
         this.idUsuario = idUsuario;
     }
 
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -40,11 +61,11 @@ public class Seguridad {
         this.password = password;
     }
 
-    public char getActivo() {
+    public Character getActivo() {
         return activo;
     }
 
-    public void setActivo(char activo) {
+    public void setActivo(Character activo) {
         this.activo = activo;
     }
 
@@ -54,13 +75,5 @@ public class Seguridad {
 
     public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
-    }
-
-    public Integer getIdEmpleado() {
-        return idEmpleado;
-    }
-
-    public void setIdEmpleado(Integer idEmpleado) {
-        this.idEmpleado = idEmpleado;
     }
 }

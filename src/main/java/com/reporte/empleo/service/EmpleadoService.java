@@ -6,6 +6,7 @@ import com.reporte.empleo.entity.Salario;
 import com.reporte.empleo.repository.EmpleadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,23 +18,25 @@ public class EmpleadoService {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
-    public List<EmpleadoDTO> buscarEmpleados(String search, String sexo) {
+    // Método para obtener todos los empleados como DTOs
+    @Transactional(readOnly = true)
+    public List<EmpleadoDTO> obtenerTodosLosEmpleados() {
+        return empleadoRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Método para buscar empleados con filtros
+    @Transactional(readOnly = true)
+    public List<EmpleadoDTO> buscarEmpleados(String nombre, String sexo) {
         List<Empleado> empleados;
 
-        if (search != null && !search.isEmpty() && sexo != null && !sexo.isEmpty()) {
-            if (sexo.length() == 1 && (sexo.equals("M") || sexo.equals("F"))) {
-                empleados = empleadoRepository.findByNombreContainingIgnoreCaseAndSexo(search, sexo.charAt(0));
-            } else {
-                throw new IllegalArgumentException("Sexo inválido. Debe ser 'M' o 'F'");
-            }
-        } else if (search != null && !search.isEmpty()) {
-            empleados = empleadoRepository.findByNombreContainingIgnoreCase(search);
+        if (nombre != null && !nombre.isEmpty() && sexo != null && !sexo.isEmpty()) {
+            empleados = empleadoRepository.findByNombreContainingIgnoreCaseAndSexo(nombre, sexo.charAt(0));
+        } else if (nombre != null && !nombre.isEmpty()) {
+            empleados = empleadoRepository.findByNombreContainingIgnoreCase(nombre);
         } else if (sexo != null && !sexo.isEmpty()) {
-            if (sexo.length() == 1 && (sexo.equals("M") || sexo.equals("F"))) {
-                empleados = empleadoRepository.findBySexo(sexo.charAt(0));
-            } else {
-                throw new IllegalArgumentException("Sexo inválido. Debe ser 'M' o 'F'");
-            }
+            empleados = empleadoRepository.findBySexo(sexo.charAt(0));
         } else {
             empleados = empleadoRepository.findAll();
         }
@@ -43,27 +46,47 @@ public class EmpleadoService {
                 .collect(Collectors.toList());
     }
 
-    public EmpleadoDTO getEmpleadoById(String id) {
-        Empleado empleado = empleadoRepository.findById(Integer.parseInt(id))
+    // Método para guardar o actualizar un empleado
+    @Transactional
+    public EmpleadoDTO saveEmpleado(EmpleadoDTO empleadoDTO) {
+        // Validaciones
+        if (empleadoDTO == null) {
+            throw new IllegalArgumentException("El empleado no puede ser nulo");
+        }
+
+        if (empleadoDTO.getNombre() == null || empleadoDTO.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+
+        // Convertir DTO a Entidad
+        Empleado empleado = convertToEntity(empleadoDTO);
+
+        // Guardar y convertir de vuelta a DTO
+        Empleado empleadoGuardado = empleadoRepository.save(empleado);
+        return convertToDTO(empleadoGuardado);
+    }
+
+    // Método para eliminar un empleado por ID
+    @Transactional
+    public void deleteEmpleadoById(String idEmpleado) {
+        Integer id = Integer.parseInt(idEmpleado);
+        if (!empleadoRepository.existsById(id)) {
+            throw new RuntimeException("Empleado no encontrado");
+        }
+        empleadoRepository.deleteById(id);
+    }
+
+    // Método para obtener un empleado por ID
+    @Transactional(readOnly = true)
+    public EmpleadoDTO getEmpleadoById(String idEmpleado) {
+        Integer id = Integer.parseInt(idEmpleado);
+        Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         return convertToDTO(empleado);
     }
 
-    public EmpleadoDTO saveEmpleado(EmpleadoDTO empleadoDTO) {
-        if (empleadoDTO.getFN() == null) {
-            throw new IllegalArgumentException("La fecha de nacimiento (FN) no puede ser nula");
-        }
-
-        Empleado empleado = convertToEntity(empleadoDTO);
-        empleado = empleadoRepository.save(empleado);
-        return convertToDTO(empleado);
-    }
-
-    public void deleteEmpleadoById(String idEmpleado) {
-        empleadoRepository.deleteById(Integer.parseInt(idEmpleado));
-    }
-
-    private EmpleadoDTO convertToDTO(Empleado empleado) {
+    // Métodos de conversión
+    public EmpleadoDTO convertToDTO(Empleado empleado) {
         EmpleadoDTO dto = new EmpleadoDTO();
         dto.setIdEmpleado(empleado.getIdEmpleado().toString());
         dto.setNombre(empleado.getNombre());
@@ -71,7 +94,6 @@ public class EmpleadoService {
         dto.setApellidoM(empleado.getApellidoM());
         dto.setSexo(String.valueOf(empleado.getSexo()));
         dto.setFN(empleado.getFN());
-
 
         if (empleado.getSalario() != null) {
             dto.setSalario(empleado.getSalario().getSalario().doubleValue());
@@ -82,7 +104,7 @@ public class EmpleadoService {
         return dto;
     }
 
-    private Empleado convertToEntity(EmpleadoDTO dto) {
+    public Empleado convertToEntity(EmpleadoDTO dto) {
         Empleado empleado = new Empleado();
         if (dto.getIdEmpleado() != null && !dto.getIdEmpleado().isEmpty()) {
             empleado.setIdEmpleado(Integer.parseInt(dto.getIdEmpleado()));

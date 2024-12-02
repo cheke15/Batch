@@ -2,7 +2,7 @@ package com.reporte.empleo.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.List;  // Importación añadida
 
 @Entity
 @Table(name = "Salario")
@@ -21,6 +21,16 @@ public class Salario {
 
     @OneToMany(mappedBy = "salario", cascade = CascadeType.ALL)
     private List<Empleado> empleados;
+
+    // Constructor vacío requerido por JPA
+    public Salario() {
+    }
+
+    // Constructor con parámetros (opcional, por si necesitas crear objetos manualmente)
+    public Salario(String descripcion, BigDecimal salario) {
+        this.descripcion = descripcion;
+        this.salario = salario;
+    }
 
     // Getters y setters
     public Integer getIdPuesto() {

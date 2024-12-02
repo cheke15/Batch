@@ -1,6 +1,6 @@
 package com.reporte.empleo.controller;
 
-import com.reporte.empleo.entity.Seguridad;
+import com.reporte.empleo.dto.SeguridadDTO;
 import com.reporte.empleo.service.SeguridadService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class SeguridadController {
                         HttpSession session,
                         RedirectAttributes redirectAttributes) {
 
-        Seguridad user = seguridadService.findById(idUsuario);
+        SeguridadDTO user = seguridadService.findById(idUsuario);
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");
             return "redirect:/seguridad/login";
